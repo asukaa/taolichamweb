@@ -2,7 +2,7 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-  base: "/taolichamweb/",
+  base: "/Lich-am-va-loi-nhac-lich-am/",
   plugins: [
     VitePWA({
       registerType: "autoUpdate",

@@ -300,7 +300,7 @@ function renderFooter(): string {
   const year = new Date().getFullYear();
   return `
     <footer class="site-footer">
-      <p>© ${year} Âm Lịch Việt Nam. Mã nguồn: <a href="https://github.com/asukaa/taolichamweb" target="_blank" rel="noopener">github.com/asukaa/taolichamweb</a></p>
+      <p>© ${year} Âm Lịch Việt Nam. Mã nguồn: <a href="https://github.com/asukaa/Lich-am-va-loi-nhac-lich-am" target="_blank" rel="noopener">github.com/asukaa/Lich-am-va-loi-nhac-lich-am</a></p>
       <p>Liên hệ: <a href="mailto:thappham1190@gmail.com">thappham1190@gmail.com</a></p>
     </footer>
   `;
