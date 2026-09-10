@@ -13,11 +13,6 @@ function setInput(name: string, value: string): void {
   el.value = value;
 }
 
-function setChecked(name: string, checked: boolean): void {
-  const el = document.querySelector<HTMLInputElement>(`[name="${name}"]`)!;
-  el.checked = checked;
-}
-
 function submitForm(): void {
   const form = document.getElementById("entry-form") as HTMLFormElement;
   form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
@@ -37,7 +32,7 @@ beforeEach(() => {
 describe("header and footer", () => {
   it("shows the current page title and a footer with copyright and contact info", () => {
     mountApp();
-    expect(document.querySelector("h1")!.textContent).toBe("Lịch ngày giỗ");
+    expect(document.querySelector("h1")!.textContent).toBe("Âm Lịch Việt Nam");
 
     const footer = document.querySelector(".site-footer")!;
     expect(footer).not.toBeNull();
@@ -79,7 +74,7 @@ describe("app end-to-end DOM flow", () => {
     setInput("eventLabel", "Giỗ Test");
     setInput("lunarDay", "10");
     setInput("lunarMonth", "5");
-    setChecked("lunarIsLeap", false);
+    setInput("lunarIsLeap", "false");
     setInput("description", "mô tả test");
     submitForm();
 

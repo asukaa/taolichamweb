@@ -87,7 +87,7 @@ function readRawFormInput(form: HTMLFormElement): RawEntryInput | null {
   const eventLabel = String(data.get("eventLabel") ?? "").trim();
   const lunarDay = Number(data.get("lunarDay"));
   const lunarMonth = Number(data.get("lunarMonth"));
-  const lunarIsLeapChecked = data.get("lunarIsLeap") === "on";
+  const lunarIsLeapChecked = data.get("lunarIsLeap") === "true";
   const deathYearRaw = String(data.get("deathYear") ?? "").trim();
   const deathYear = deathYearRaw ? Number(deathYearRaw) : null;
   const description = String(data.get("description") ?? "").trim();
@@ -118,7 +118,7 @@ function resolveLunarIsLeap(raw: RawEntryInput): boolean | null {
     if (resolution.ambiguous) {
       alert(
         `Lưu ý: năm ${raw.deathYear} âm lịch có cả tháng ${raw.lunarMonth} thường và tháng ${raw.lunarMonth} nhuận. ` +
-          `Hệ thống không tự xác định được — hãy tick "Tháng nhuận" nếu đúng là tháng nhuận, để trống nếu là tháng thường.`,
+          `Hệ thống không tự xác định được — hãy chọn "Tháng nhuận" ở ô "Loại tháng" nếu đúng là tháng nhuận, để "Tháng thường" nếu không phải.`,
       );
       return raw.lunarIsLeapChecked;
     }
@@ -126,7 +126,7 @@ function resolveLunarIsLeap(raw: RawEntryInput): boolean | null {
   }
   if (!raw.lunarIsLeapChecked) {
     const proceed = confirm(
-      'Bạn chưa nhập năm mất và chưa tick "Tháng nhuận" - hệ thống sẽ mặc định đây là tháng thường.\n\n' +
+      'Bạn chưa nhập năm mất và đang để "Tháng thường" - hệ thống sẽ lưu đây là tháng thường.\n\n' +
         "Nếu ngày giỗ thực tế rơi vào tháng nhuận, ngày dương lịch tính ra sẽ sai 1 tháng.\n\n" +
         'Nhập năm mất ở form để hệ thống tự xác định, hoặc bấm "Hủy" để quay lại chỉnh sửa trước khi lưu.',
     );
@@ -139,11 +139,11 @@ function renderForm(entries: AnniversaryEntry[]): string {
   const editing = editingId ? entries.find((e) => e.id === editingId) ?? null : null;
   return `
     <form id="entry-form" class="card">
-      <h2>${editing ? "Sửa ngày giỗ" : "Thêm ngày giỗ"}</h2>
+      <h2>${editing ? "Sửa ngày giỗ" : "Tạo lịch nhắc công việc"}</h2>
       <label>Tên người mất
         <input name="personName" required value="${editing ? escapeHtml(editing.personName) : ""}" placeholder="VD: Ông Nguyễn Văn A" />
       </label>
-      <label>Nhãn sự kiện
+      <label>Tên sự kiện
         <input name="eventLabel" required value="${editing ? escapeHtml(editing.eventLabel) : ""}" placeholder="VD: Giỗ Ông Nội" />
       </label>
       <div class="row">
@@ -153,20 +153,22 @@ function renderForm(entries: AnniversaryEntry[]): string {
         <label>Tháng âm lịch
           <input name="lunarMonth" type="number" min="1" max="12" required value="${editing ? editing.lunarMonth : ""}" />
         </label>
+        <label>Loại tháng
+          <select name="lunarIsLeap">
+            <option value="false" ${editing?.lunarIsLeap ? "" : "selected"}>Tháng thường</option>
+            <option value="true" ${editing?.lunarIsLeap ? "selected" : ""}>Tháng nhuận</option>
+          </select>
+        </label>
         <label>Năm mất (dương lịch)
           <input name="deathYear" type="number" min="1900" max="2200" value="${editing?.deathYear ?? ""}" placeholder="VD: 2017" />
-        </label>
-        <label class="checkbox">
-          <input name="lunarIsLeap" type="checkbox" ${editing?.lunarIsLeap ? "checked" : ""} />
-          Tháng nhuận
         </label>
       </div>
       <p class="hint">
         💡 "Năm mất" không bắt buộc — chỉ cần nhập khi biết, để hệ thống tự xác định tháng nhuận thay vì phải tự
-        tick. Nếu không nhập năm mất và cũng không tick "Tháng nhuận", hệ thống sẽ hỏi lại trước khi lưu để tránh
+        chọn. Nếu không nhập năm mất và cũng không chọn "Tháng nhuận", hệ thống sẽ hỏi lại trước khi lưu để tránh
         nhầm giữa tháng thường và tháng nhuận.
       </p>
-      <label>Mô tả (giờ mất, ngày dương lịch mất...)
+      <label>Ghi chú thêm ...
         <textarea name="description" rows="2" placeholder="VD: mất lúc 14h ngày 02/12/2025">${editing ? escapeHtml(editing.description) : ""}</textarea>
       </label>
       <div class="row">
@@ -240,8 +242,8 @@ function render(): void {
 
   app.innerHTML = `
     <header>
-      <h1>Lịch ngày giỗ</h1>
-      <p class="subtitle">Nhập ngày giỗ âm lịch, xem ngày dương lịch tương ứng từng năm và xuất lịch nhắc.</p>
+      <h1>Âm Lịch Việt Nam</h1>
+      <p class="subtitle">Tra cứu lịch âm dương - Tạo lời nhắc theo ngày âm lịch trong nhiều năm tiếp theo.</p>
     </header>
     ${renderLunarLookup()}
     ${renderForm(entries)}
@@ -289,7 +291,7 @@ function renderFooter(): string {
   const year = new Date().getFullYear();
   return `
     <footer class="site-footer">
-      <p>© ${year} Lịch Ngày Giỗ. Mã nguồn: <a href="https://github.com/asukaa/taolichamweb" target="_blank" rel="noopener">github.com/asukaa/taolichamweb</a></p>
+      <p>© ${year} Âm Lịch Việt Nam. Mã nguồn: <a href="https://github.com/asukaa/taolichamweb" target="_blank" rel="noopener">github.com/asukaa/taolichamweb</a></p>
       <p>Liên hệ: <a href="mailto:thappham1190@gmail.com">thappham1190@gmail.com</a></p>
     </footer>
   `;

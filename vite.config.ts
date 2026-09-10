@@ -8,9 +8,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["icon.svg"],
       manifest: {
-        name: "Lịch Ngày Giỗ",
-        short_name: "Lịch Ngày Giỗ",
-        description: "Nhập ngày giỗ âm lịch, xem ngày dương lịch tương ứng từng năm và xuất lịch nhắc.",
+        name: "Âm Lịch Việt Nam",
+        short_name: "Âm Lịch Việt Nam",
+        description: "Tra cứu lịch âm dương - Tạo lời nhắc theo ngày âm lịch trong nhiều năm tiếp theo.",
         theme_color: "#7c3aed",
         background_color: "#ffffff",
         display: "standalone",
