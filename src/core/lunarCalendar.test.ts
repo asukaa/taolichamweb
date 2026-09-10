@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  getDayCanChi,
   getIsoWeekNumber,
+  getMonthCanChi,
+  getSolarTermName,
   getWeekdayName,
+  getYearCanChi,
   isPossibleLeapMonth,
   lunarToSolar,
   resolveLeapFromDeathYear,
@@ -115,6 +119,47 @@ describe("Vietnamese (UTC+7) lunar calendar vs Chinese (UTC+8)", () => {
     expect(vn).toEqual({ year: 1984, month: 5, day: 3, isLeap: false });
     expect(cn).toEqual({ year: 1984, month: 5, day: 2, isLeap: false });
     expect(vn).not.toEqual(cn);
+  });
+});
+
+describe("Can Chi (sexagenary cycle)", () => {
+  it("matches well-known lunar year names", () => {
+    expect(getYearCanChi(2024)).toBe("Giáp Thìn");
+    expect(getYearCanChi(2025)).toBe("Ất Tỵ");
+    expect(getYearCanChi(2026)).toBe("Bính Ngọ");
+  });
+
+  it("matches the traditional month-branch convention (tháng Giêng = Dần) and the Ngũ Hổ Độn rule", () => {
+    // Month 1 (Giêng) is always the "Dần" branch, by long-standing convention.
+    expect(getMonthCanChi({ year: 2024, month: 1 })).toBe("Bính Dần");
+    // Ngũ Hổ Độn: a Giáp or Kỷ lunar year's first month (Dần) is Bính Dần - 2024 is Giáp.
+    expect(getMonthCanChi({ year: 2024, month: 1 })).toMatch(/Dần$/);
+  });
+
+  it("day Can Chi advances by exactly one step of the 60-day cycle per day", () => {
+    const day1 = getDayCanChi({ year: 2026, month: 3, day: 1 });
+    const day2 = getDayCanChi({ year: 2026, month: 3, day: 2 });
+    const day61 = getDayCanChi({ year: 2026, month: 4, day: 30 }); // 60 days after Mar 1, 2026
+    expect(day2).not.toBe(day1);
+    expect(day61).toBe(day1); // full 60-day cycle repeats
+  });
+});
+
+describe("getSolarTermName", () => {
+  it("recognizes the 4 solstices/equinoxes on dates safely inside each term's ~15-day span", () => {
+    expect(getSolarTermName({ year: 2026, month: 3, day: 25 })).toBe("Xuân Phân"); // spring equinox ~Mar 20
+    expect(getSolarTermName({ year: 2026, month: 6, day: 25 })).toBe("Hạ Chí"); // summer solstice ~Jun 21
+    expect(getSolarTermName({ year: 2026, month: 9, day: 26 })).toBe("Thu Phân"); // autumn equinox ~Sep 23
+    expect(getSolarTermName({ year: 2026, month: 12, day: 25 })).toBe("Đông Chí"); // winter solstice ~Dec 21
+  });
+
+  it("cycles through all 24 terms roughly every 15 days over a full year", () => {
+    const seen = new Set<string>();
+    for (let d = 0; d < 365; d += 15) {
+      const date = new Date(Date.UTC(2026, 0, 1 + d));
+      seen.add(getSolarTermName({ year: date.getUTCFullYear(), month: date.getUTCMonth() + 1, day: date.getUTCDate() }));
+    }
+    expect(seen.size).toBeGreaterThanOrEqual(20);
   });
 });
 

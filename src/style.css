@@ -7,6 +7,11 @@
   --accent: #7c3aed;
   --accent-contrast: #ffffff;
   --danger: #dc2626;
+  --week-tint: #ede9f7;
+  --weekend-tint: #fdecec;
+  --holiday-tint: #fdf1c7;
+  --holiday-text: #92650a;
+  --hover-tint: #e7defb;
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
 
   font: 16px/1.5 var(--sans);
@@ -26,6 +31,11 @@
     --accent: #a78bfa;
     --accent-contrast: #15131a;
     --danger: #f87171;
+    --week-tint: #2a2438;
+    --weekend-tint: #3a2226;
+    --holiday-tint: #3d3418;
+    --holiday-text: #f2c34d;
+    --hover-tint: #3a3350;
   }
 }
 
@@ -116,6 +126,33 @@ textarea:focus {
   margin: -4px 0 12px;
 }
 
+.export-range {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.export-range label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  text-align: left;
+  margin-bottom: 0;
+}
+
+.export-range input {
+  width: 6em;
+}
+
+.lookup-export-btn {
+  background: transparent;
+  color: var(--accent);
+}
+
 button {
   font: inherit;
   padding: 8px 14px;
@@ -158,6 +195,44 @@ button.delete {
   margin-bottom: 0;
 }
 
+.settings-row.compact {
+  align-items: center;
+  gap: 20px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.settings-field-label {
+  white-space: nowrap;
+}
+
+.settings-row.compact input {
+  padding: 5px 6px;
+  font-size: 13px;
+}
+
+#years-ahead {
+  width: 4.5em;
+}
+
+.alarm-inline {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.alarm-inline input {
+  width: 3.2em;
+}
+
 .toolbar {
   display: flex;
   gap: 8px;
@@ -178,6 +253,7 @@ button.delete {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -207,6 +283,55 @@ button.delete {
   width: 5.5em;
 }
 
+.year-input-group {
+  display: flex;
+  align-items: stretch;
+}
+
+.year-input-group input {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right: none;
+  /* Hide the native number-input spinner so only our custom ▲▼ buttons show. */
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.year-input-group input::-webkit-outer-spin-button,
+.year-input-group input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.year-stepper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  overflow: hidden;
+}
+
+.year-stepper button {
+  flex: 1;
+  padding: 0 8px;
+  font-size: 9px;
+  line-height: 1;
+  border: none;
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--text-h);
+}
+
+.year-stepper button:first-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.year-stepper button:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
 .lookup-grid {
   width: 100%;
   border-collapse: collapse;
@@ -220,17 +345,26 @@ button.delete {
   font-weight: 500;
 }
 
-.lookup-grid th:first-child,
-.lookup-grid td.week-number {
+.lookup-grid th.week-number {
   width: 12%;
+}
+
+.lookup-grid th.weekend {
+  color: var(--danger);
+  opacity: 1;
+  font-weight: 700;
+  background: var(--weekend-tint);
+  border-radius: 4px;
 }
 
 .lookup-grid td.week-number {
   font-size: 11px;
-  opacity: 0.6;
+  font-weight: 600;
+  opacity: 0.85;
   border: none;
   vertical-align: middle;
   text-align: center;
+  background: var(--week-tint);
 }
 
 .lookup-grid td {
@@ -251,11 +385,26 @@ button.delete {
 
 .lookup-grid .lunar-day {
   font-size: 11px;
-  opacity: 0.65;
+  font-weight: 600;
+  opacity: 0.85;
+  color: var(--text-h);
+}
+
+.lookup-grid td.weekend {
+  background: var(--weekend-tint);
 }
 
 .lookup-grid td.weekend .solar-day {
   color: var(--danger);
+}
+
+.lookup-grid td.holiday {
+  background: var(--holiday-tint);
+}
+
+.lookup-grid td.holiday .solar-day {
+  color: var(--holiday-text);
+  font-weight: 700;
 }
 
 .lookup-grid td.today {
@@ -267,6 +416,171 @@ button.delete {
 .lookup-grid td.today .lunar-day {
   color: var(--accent-contrast);
   opacity: 1;
+}
+
+.lookup-grid td.lookup-day {
+  cursor: pointer;
+}
+
+.lookup-grid td.lookup-day:hover {
+  background: var(--hover-tint);
+}
+
+.lookup-grid td.lookup-day.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+.lookup-detail-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 50;
+}
+
+.lookup-detail {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  padding: 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 10px 30px;
+  text-align: left;
+}
+
+.lookup-detail-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.lookup-detail-holiday {
+  margin: 0 0 8px;
+  padding: 4px 10px;
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--holiday-tint);
+  color: var(--holiday-text);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.lookup-detail dl {
+  margin: 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+}
+
+.lookup-detail dt {
+  color: var(--text-h);
+  opacity: 0.7;
+  font-size: 13px;
+}
+
+.lookup-detail dd {
+  margin: 0;
+  font-weight: 500;
+}
+
+.year-view-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 40;
+}
+
+.year-view {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: rgba(0, 0, 0, 0.25) 0 10px 30px;
+  text-align: center;
+}
+
+.year-view-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.year-view h2 {
+  margin: 0;
+  color: var(--text-h);
+}
+
+.year-view-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.year-view-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.year-view-month h3 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--text-h);
+}
+
+.lookup-grid.compact th {
+  font-size: 10px;
+  padding: 2px 0;
+}
+
+.lookup-grid.compact td {
+  padding: 1px;
+  height: 28px;
+}
+
+.lookup-grid.compact .solar-day {
+  font-size: 11px;
+}
+
+.lookup-grid.compact .lunar-day {
+  font-size: 9px;
+}
+
+.year-view-footer {
+  margin-top: 16px;
+  text-align: center;
 }
 
 .entry-list {
@@ -343,4 +657,21 @@ td {
   .entry-row {
     flex-direction: column;
   }
+}
+
+.site-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+.site-footer p {
+  margin: 4px 0;
+}
+
+.site-footer a {
+  color: var(--accent);
 }

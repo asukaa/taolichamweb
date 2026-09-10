@@ -10,9 +10,15 @@ import { buildIcsCalendar, downloadIcsFile, type IcsEventInput } from "../servic
 import { downloadBlob } from "../services/download";
 import type { AnniversaryEntry, AnniversaryInput } from "../models/anniversary";
 import { renderLunarLookup, wireLunarLookup } from "./lunarLookup";
+import { escapeHtml } from "./escapeHtml";
 
 const YEARS_AHEAD_KEY = "taolicham.yearsAhead.v1";
 const DEFAULT_YEARS_AHEAD = 15;
+
+const ALARM_DAYS_KEY = "taolicham.alarmDays.v1";
+const ALARM_HOURS_KEY = "taolicham.alarmHours.v1";
+const ALARM_MINUTES_KEY = "taolicham.alarmMinutes.v1";
+const DEFAULT_ALARM_DAYS = 1;
 
 let editingId: string | null = null;
 let expandedId: string | null = null;
@@ -27,6 +33,20 @@ function setYearsAhead(n: number): void {
   localStorage.setItem(YEARS_AHEAD_KEY, String(n));
 }
 
+function getStoredNonNegativeInt(key: string, fallback: number): number {
+  const raw = localStorage.getItem(key);
+  const n = raw !== null ? parseInt(raw, 10) : NaN;
+  return Number.isInteger(n) && n >= 0 ? n : fallback;
+}
+
+function getAlarmSettings(): { days: number; hours: number; minutes: number } {
+  return {
+    days: getStoredNonNegativeInt(ALARM_DAYS_KEY, DEFAULT_ALARM_DAYS),
+    hours: getStoredNonNegativeInt(ALARM_HOURS_KEY, 0),
+    minutes: getStoredNonNegativeInt(ALARM_MINUTES_KEY, 0),
+  };
+}
+
 function formatSolar(d: { year: number; month: number; day: number }): string {
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(d.day)}/${pad(d.month)}/${d.year}`;
@@ -34,14 +54,6 @@ function formatSolar(d: { year: number; month: number; day: number }): string {
 
 function formatLunar(entry: Pick<AnniversaryEntry, "lunarDay" | "lunarMonth" | "lunarIsLeap">): string {
   return `${entry.lunarDay}/${entry.lunarMonth}${entry.lunarIsLeap ? " (nhuận)" : ""}`;
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 function entryToIcsEvents(entry: AnniversaryEntry, yearsAhead: number): IcsEventInput[] {
@@ -55,6 +67,7 @@ function entryToIcsEvents(entry: AnniversaryEntry, yearsAhead: number): IcsEvent
     summary: `${entry.eventLabel}(${entry.lunarDay}/${entry.lunarMonth})`,
     description: entry.description,
     date: o.solar,
+    alarmLabel: entry.eventLabel,
   }));
 }
 
@@ -140,9 +153,7 @@ function renderForm(entries: AnniversaryEntry[]): string {
         <label>Tháng âm lịch
           <input name="lunarMonth" type="number" min="1" max="12" required value="${editing ? editing.lunarMonth : ""}" />
         </label>
-      </div>
-      <div class="row">
-        <label>Năm mất (dương lịch) - không bắt buộc
+        <label>Năm mất (dương lịch)
           <input name="deathYear" type="number" min="1900" max="2200" value="${editing?.deathYear ?? ""}" placeholder="VD: 2017" />
         </label>
         <label class="checkbox">
@@ -151,9 +162,9 @@ function renderForm(entries: AnniversaryEntry[]): string {
         </label>
       </div>
       <p class="hint">
-        💡 Không chắc ngày giỗ có rơi vào tháng nhuận không? Nhập năm mất (dương lịch) ở trên, hệ thống sẽ tự xác định
-        thay vì phải tick thủ công. Nếu để trống cả năm mất lẫn ô "Tháng nhuận", hệ thống sẽ cảnh báo trước khi lưu để
-        tránh sai sót.
+        💡 "Năm mất" không bắt buộc — chỉ cần nhập khi biết, để hệ thống tự xác định tháng nhuận thay vì phải tự
+        tick. Nếu không nhập năm mất và cũng không tick "Tháng nhuận", hệ thống sẽ hỏi lại trước khi lưu để tránh
+        nhầm giữa tháng thường và tháng nhuận.
       </p>
       <label>Mô tả (giờ mất, ngày dương lịch mất...)
         <textarea name="description" rows="2" placeholder="VD: mất lúc 14h ngày 02/12/2025">${editing ? escapeHtml(editing.description) : ""}</textarea>
@@ -225,19 +236,38 @@ function render(): void {
   if (!app) return;
   const entries = listAnniversaries();
   const yearsAhead = getYearsAhead();
+  const alarmSettings = getAlarmSettings();
 
   app.innerHTML = `
     <header>
-      <h1>Lịch giỗ âm lịch</h1>
+      <h1>Lịch ngày giỗ</h1>
       <p class="subtitle">Nhập ngày giỗ âm lịch, xem ngày dương lịch tương ứng từng năm và xuất lịch nhắc.</p>
     </header>
     ${renderLunarLookup()}
     ${renderForm(entries)}
     <section class="card">
-      <div class="settings-row">
-        <label>Xem trước bao nhiêu năm tới
+      <div class="settings-row compact">
+        <label class="settings-field">Tạo lịch cho bao nhiêu năm tới
           <input id="years-ahead" type="number" min="1" max="50" value="${yearsAhead}" />
         </label>
+        <div class="settings-field">
+          <span class="settings-field-label">Nhắc trước (khi xuất .ics)</span>
+          <div class="alarm-inline">
+            <input id="alarm-days" type="number" min="0" value="${alarmSettings.days}" aria-label="Số ngày nhắc trước" />
+            <span>ngày</span>
+            <input id="alarm-hours" type="number" min="0" max="23" value="${alarmSettings.hours}" aria-label="Số giờ nhắc trước" />
+            <span>giờ</span>
+            <input
+              id="alarm-minutes"
+              type="number"
+              min="0"
+              max="59"
+              value="${alarmSettings.minutes}"
+              aria-label="Số phút nhắc trước"
+            />
+            <span>phút</span>
+          </div>
+        </div>
       </div>
       <div class="toolbar">
         <button type="button" id="download-template">Tải file mẫu (.xlsx)</button>
@@ -248,10 +278,21 @@ function render(): void {
       </div>
       <ul class="entry-list">${renderList(entries, yearsAhead)}</ul>
     </section>
+    ${renderFooter()}
   `;
 
   wireEvents(entries, yearsAhead);
   wireLunarLookup(render);
+}
+
+function renderFooter(): string {
+  const year = new Date().getFullYear();
+  return `
+    <footer class="site-footer">
+      <p>© ${year} Lịch Ngày Giỗ. Mã nguồn: <a href="https://github.com/asukaa/taolichamweb" target="_blank" rel="noopener">github.com/asukaa/taolichamweb</a></p>
+      <p>Liên hệ: <a href="mailto:thappham1190@gmail.com">thappham1190@gmail.com</a></p>
+    </footer>
+  `;
 }
 
 function wireEvents(entries: AnniversaryEntry[], yearsAhead: number): void {
@@ -298,9 +339,28 @@ function wireEvents(entries: AnniversaryEntry[], yearsAhead: number): void {
     }
   });
 
+  document.getElementById("alarm-days")?.addEventListener("change", (e) => {
+    const value = Number((e.target as HTMLInputElement).value);
+    if (Number.isInteger(value) && value >= 0) {
+      localStorage.setItem(ALARM_DAYS_KEY, String(value));
+    }
+  });
+  document.getElementById("alarm-hours")?.addEventListener("change", (e) => {
+    const value = Number((e.target as HTMLInputElement).value);
+    if (Number.isInteger(value) && value >= 0 && value <= 23) {
+      localStorage.setItem(ALARM_HOURS_KEY, String(value));
+    }
+  });
+  document.getElementById("alarm-minutes")?.addEventListener("change", (e) => {
+    const value = Number((e.target as HTMLInputElement).value);
+    if (Number.isInteger(value) && value >= 0 && value <= 59) {
+      localStorage.setItem(ALARM_MINUTES_KEY, String(value));
+    }
+  });
+
   document.getElementById("export-all")?.addEventListener("click", () => {
     const allEvents = entries.flatMap((entry) => entryToIcsEvents(entry, yearsAhead));
-    downloadIcsFile("ngay-gio.ics", buildIcsCalendar(allEvents));
+    downloadIcsFile("ngay-gio.ics", buildIcsCalendar(allEvents, getAlarmSettings()));
   });
 
   // The Excel library is only needed for these actions, so it's loaded on demand
@@ -366,7 +426,7 @@ function wireEvents(entries: AnniversaryEntry[], yearsAhead: number): void {
     btn.addEventListener("click", () => {
       const entry = entries.find((e) => e.id === btn.dataset.id);
       if (!entry) return;
-      downloadIcsFile(`${entry.eventLabel}.ics`, buildIcsCalendar(entryToIcsEvents(entry, yearsAhead)));
+      downloadIcsFile(`${entry.eventLabel}.ics`, buildIcsCalendar(entryToIcsEvents(entry, yearsAhead), getAlarmSettings()));
     });
   });
 }

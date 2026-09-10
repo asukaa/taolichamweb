@@ -255,6 +255,63 @@ export interface LeapResolution {
   isLeap: boolean;
 }
 
+const CAN_VI = ["Giáp", "Ất", "Bính", "Đinh", "Mậu", "Kỷ", "Canh", "Tân", "Nhâm", "Quý"];
+const CHI_VI = ["Tý", "Sửu", "Dần", "Mão", "Thìn", "Tỵ", "Ngọ", "Mùi", "Thân", "Dậu", "Tuất", "Hợi"];
+
+/** "Can Chi" (Lục Thập Hoa Giáp / sexagenary cycle) name of the day, from the solar date. */
+export function getDayCanChi(solar: SolarDate): string {
+  const jd = jdFromDate(solar.day, solar.month, solar.year);
+  return `${CAN_VI[(jd + 9) % 10]} ${CHI_VI[(jd + 1) % 12]}`;
+}
+
+/** Can Chi name of the lunar month (uses the lunar year/month, not the solar one). */
+export function getMonthCanChi(lunar: Pick<LunarDate, "year" | "month">): string {
+  return `${CAN_VI[(lunar.year * 12 + lunar.month + 3) % 10]} ${CHI_VI[(lunar.month + 1) % 12]}`;
+}
+
+/** Can Chi name of the lunar year. */
+export function getYearCanChi(lunarYear: number): string {
+  return `${CAN_VI[(lunarYear + 6) % 10]} ${CHI_VI[(lunarYear + 8) % 12]}`;
+}
+
+const SOLAR_TERM_NAMES_VI = [
+  "Lập Xuân",
+  "Vũ Thủy",
+  "Kinh Trập",
+  "Xuân Phân",
+  "Thanh Minh",
+  "Cốc Vũ",
+  "Lập Hạ",
+  "Tiểu Mãn",
+  "Mang Chủng",
+  "Hạ Chí",
+  "Tiểu Thử",
+  "Đại Thử",
+  "Lập Thu",
+  "Xử Thử",
+  "Bạch Lộ",
+  "Thu Phân",
+  "Hàn Lộ",
+  "Sương Giáng",
+  "Lập Đông",
+  "Tiểu Tuyết",
+  "Đại Tuyết",
+  "Đông Chí",
+  "Tiểu Hàn",
+  "Đại Hàn",
+];
+
+/** Index (0-23) of the current "tiết khí" (solar term), in the traditional order starting at Lập Xuân. */
+export function getSolarTermIndex(solar: SolarDate, timeZone: number = VN_TIME_ZONE): number {
+  const jd = jdFromDate(solar.day, solar.month, solar.year);
+  const longitudeDegrees = (sunLongitude(jd - 0.5 - timeZone / 24) * 180) / Math.PI;
+  return Math.floor((longitudeDegrees + 45) / 15) % 24;
+}
+
+export function getSolarTermName(solar: SolarDate, timeZone: number = VN_TIME_ZONE): string {
+  return SOLAR_TERM_NAMES_VI[getSolarTermIndex(solar, timeZone)];
+}
+
 export function resolveLeapFromDeathYear(
   lunarDay: number,
   lunarMonth: number,
