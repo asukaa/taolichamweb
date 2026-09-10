@@ -158,7 +158,10 @@ function renderForm(entries: AnniversaryEntry[]): string {
         💡 "Năm mất" không bắt buộc — chỉ cần nhập khi biết, để hệ thống tự xác định tháng nhuận thay vì phải tự
         chọn. Nếu không nhập năm mất, hệ thống sẽ lưu theo lựa chọn ở ô "Loại tháng" (mặc định là "Tháng thường").
         Nếu ngày giỗ thực tế rơi vào tháng nhuận mà ô "Loại tháng" đang để "Tháng thường" (hoặc ngược lại), ngày
-        dương lịch tính ra sẽ bị sai lệch khoảng 1 tháng — hãy chọn đúng loại tháng trước khi lưu.
+        dương lịch tính ra sẽ bị sai lệch khoảng 1 tháng — hãy chọn đúng loại tháng trước khi lưu. Tháng nhuận
+        không lặp lại mỗi năm, nên nếu chọn "Tháng nhuận": những năm âm lịch nào có đúng tháng nhuận đó thì lấy
+        theo tháng nhuận, còn các năm khác sẽ tự động lấy theo tháng thường tương ứng để giỗ vẫn diễn ra đều
+        đặn mỗi năm.
       </p>
       <label>Ghi chú thêm ...
         <textarea name="description" rows="2" placeholder="VD: mất lúc 14h ngày 02/12/2025">${editing ? escapeHtml(editing.description) : ""}</textarea>
@@ -181,7 +184,7 @@ function renderPreview(entry: AnniversaryEntry, yearsAhead: number): string {
   const rows = occurrences
     .map(
       (o) =>
-        `<tr><td>${o.year}</td><td>${formatLunar(entry)}</td><td>${getWeekdayName(o.solar)}</td><td>${formatSolar(o.solar)}</td></tr>`,
+        `<tr><td>${o.year}</td><td>${entry.lunarDay}/${entry.lunarMonth}${o.isLeap ? " (nhuận)" : ""}</td><td>${getWeekdayName(o.solar)}</td><td>${formatSolar(o.solar)}</td></tr>`,
     )
     .join("");
   return `

@@ -216,5 +216,27 @@ describe("projectAnniversaryYears", () => {
     expect(occurrences.map((o) => o.year)).toEqual(
       Array.from({ length: 2041 - 2026 + 1 }, (_, i) => 2026 + i),
     );
+    expect(occurrences.every((o) => o.isLeap === false)).toBe(true);
+  });
+
+  it("a leap-month anniversary still produces one occurrence per year (Vietnamese giỗ custom), using the true leap date only in years that have it", () => {
+    // Lunar year 2023 is the well-known "nhuận tháng 2" year.
+    const occurrences = projectAnniversaryYears({ lunarDay: 15, lunarMonth: 2, lunarIsLeap: true }, 2020, 2026);
+    expect(occurrences).toHaveLength(2026 - 2020 + 1);
+    expect(occurrences.map((o) => o.year)).toEqual([2020, 2021, 2022, 2023, 2024, 2025, 2026]);
+
+    const byYear = new Map(occurrences.map((o) => [o.year, o]));
+    // 2023 actually has a leap 2nd month - use the true leap occurrence.
+    expect(byYear.get(2023)).toEqual({ year: 2023, solar: { year: 2023, month: 4, day: 5 }, isLeap: true });
+    // Every other year has no leap 2nd month - fall back to the regular one.
+    for (const year of [2020, 2021, 2022, 2024, 2025, 2026]) {
+      expect(byYear.get(year)!.isLeap).toBe(false);
+    }
+    // The fallback regular occurrence must match a plain (non-leap) 15/2 anniversary exactly.
+    const regular = projectAnniversaryYears({ lunarDay: 15, lunarMonth: 2, lunarIsLeap: false }, 2020, 2026);
+    const regularByYear = new Map(regular.map((o) => [o.year, o.solar]));
+    for (const year of [2020, 2021, 2022, 2024, 2025, 2026]) {
+      expect(byYear.get(year)!.solar).toEqual(regularByYear.get(year));
+    }
   });
 });
