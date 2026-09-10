@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#7c3aed"/>
+  <rect x="96" y="140" width="320" height="272" rx="24" fill="#ffffff"/>
+  <rect x="96" y="140" width="320" height="72" rx="24" fill="#5b21b6"/>
+  <rect x="150" y="104" width="24" height="64" rx="12" fill="#5b21b6"/>
+  <rect x="338" y="104" width="24" height="64" rx="12" fill="#5b21b6"/>
+  <circle cx="330" cy="300" r="54" fill="#fde68a"/>
+  <circle cx="352" cy="286" r="54" fill="#ffffff"/>
+  <text x="176" y="330" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700" fill="#5b21b6">Am</text>
+</svg>
