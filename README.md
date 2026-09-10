@@ -3,7 +3,7 @@
 Web app (PWA) giúp nhập ngày giỗ theo âm lịch Việt Nam, tự động quy đổi sang ngày dương lịch cho các năm
 tiếp theo, tra cứu lịch âm hàng ngày, và xuất ra lịch nhắc (kèm báo trước) để đưa vào ứng dụng lịch
 (Google Calendar, Outlook, Apple Calendar...).
-
+Thuật toán tính lịch âm được lấy từ code của Hồ Ngọc Đức 
 Bản demo trực tuyến: **https://asukaa.github.io/taolichamweb/**
 
 ## Tính năng
