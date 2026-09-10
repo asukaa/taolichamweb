@@ -10,6 +10,7 @@ import { buildIcsCalendar, downloadIcsFile, type IcsEventInput } from "../servic
 import { downloadBlob } from "../services/download";
 import type { AnniversaryEntry, AnniversaryInput } from "../models/anniversary";
 import { renderLunarLookup, wireLunarLookup } from "./lunarLookup";
+import { renderDonateButton, renderHelpButton, renderInfoPanels, wireInfoPanels } from "./infoPanels";
 import { escapeHtml } from "./escapeHtml";
 
 const YEARS_AHEAD_KEY = "taolicham.yearsAhead.v1";
@@ -131,7 +132,7 @@ function renderForm(entries: AnniversaryEntry[]): string {
   return `
     <form id="entry-form" class="card">
       <h2>${editing ? "Sửa ngày giỗ" : "Tạo lịch nhắc công việc"}</h2>
-      <label>Tên người mất
+      <label>Họ và Tên
         <input name="personName" required value="${editing ? escapeHtml(editing.personName) : ""}" placeholder="VD: Ông Nguyễn Văn A" />
       </label>
       <label>Tên sự kiện
@@ -237,7 +238,10 @@ function render(): void {
 
   app.innerHTML = `
     <header>
-      <h1>Âm Lịch Việt Nam</h1>
+      <div class="header-top">
+        <h1>Âm Lịch Việt Nam</h1>
+        ${renderHelpButton()}
+      </div>
       <p class="subtitle">Tra cứu lịch âm dương - Tạo lời nhắc theo ngày âm lịch trong nhiều năm tiếp theo.</p>
     </header>
     ${renderLunarLookup()}
@@ -275,11 +279,14 @@ function render(): void {
       </div>
       <ul class="entry-list">${renderList(entries, yearsAhead)}</ul>
     </section>
+    <div class="donate-row">${renderDonateButton()}</div>
     ${renderFooter()}
+    ${renderInfoPanels()}
   `;
 
   wireEvents(entries, yearsAhead);
   wireLunarLookup(render);
+  wireInfoPanels(render);
 }
 
 function renderFooter(): string {
