@@ -102,7 +102,6 @@ function renderDonateModal(): string {
           một chút để có thêm động lực duy trì và phát triển thêm tính năng mới. Xin chân thành cảm ơn!
         </p>
         <img class="donate-qr" src="${VIETQR_IMAGE_URL}" alt="Mã QR chuyển khoản Vietcombank" loading="lazy" />
-        <p class="donate-account">Vietcombank — ${DONOR_ACCOUNT_NAME} — STK ${DONOR_ACCOUNT_NO}</p>
       </div>
     </div>
   `;

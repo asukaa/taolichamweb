@@ -38,7 +38,7 @@ describe("header and footer", () => {
     expect(footer).not.toBeNull();
     expect(footer.textContent).toContain(String(new Date().getFullYear()));
     expect(footer.querySelector('a[href*="github.com"]')).not.toBeNull();
-    expect(footer.querySelector('a[href^="mailto:"]')?.getAttribute("href")).toBe("mailto:thappham1190@gmail.com");
+    expect(footer.querySelector('a[href^="mailto:"]')).toBeNull();
   });
 
   it("no longer labels the Can Chi day row with the '(Lục thập hoa giáp)' suffix", () => {

@@ -865,12 +865,6 @@ td {
   border: 1px solid var(--border);
 }
 
-.donate-account {
-  text-align: center !important;
-  font-weight: 600;
-  color: var(--text-h);
-}
-
 .ics-guide-link {
   display: block;
   margin-top: 18px;

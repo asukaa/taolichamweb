@@ -301,7 +301,6 @@ function renderFooter(): string {
   return `
     <footer class="site-footer">
       <p>© ${year} Âm Lịch Việt Nam. Mã nguồn: <a href="https://github.com/asukaa/Lich-am-va-loi-nhac-lich-am" target="_blank" rel="noopener">github.com/asukaa/Lich-am-va-loi-nhac-lich-am</a></p>
-      <p>Liên hệ: <a href="thappham1190"</a></p>
     </footer>
   `;
 }
