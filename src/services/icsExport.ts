@@ -15,9 +15,9 @@ function formatDateStamp(d: SolarDate): string {
   return `${d.year}${pad(d.month)}${pad(d.day)}`;
 }
 
-function addDays(d: SolarDate, days: number): SolarDate {
-  const jsDate = new Date(Date.UTC(d.year, d.month - 1, d.day + days));
-  return { year: jsDate.getUTCFullYear(), month: jsDate.getUTCMonth() + 1, day: jsDate.getUTCDate() };
+/** Floating local time (no Z / TZID), so it always reads as that literal wall-clock time. */
+function formatLocalDateTime(d: SolarDate, hour: number, minute: number, second: number): string {
+  return `${formatDateStamp(d)}T${pad(hour)}${pad(minute)}${pad(second)}`;
 }
 
 function escapeText(value: string): string {
@@ -36,14 +36,13 @@ export function buildIcsCalendar(events: IcsEventInput[]): string {
   const dtstamp = nowAsUtcStamp();
   const lines = ["BEGIN:VCALENDAR", "PRODID:-//taolicham.web//lunar anniversaries//VI", "VERSION:2.0"];
   for (const event of events) {
-    const start = event.date;
-    const end = addDays(start, 1);
+    const day = event.date;
     lines.push(
       "BEGIN:VEVENT",
       `DESCRIPTION:${escapeText(event.description)}`,
-      `DTEND;VALUE=DATE:${formatDateStamp(end)}`,
+      `DTEND:${formatLocalDateTime(day, 23, 59, 0)}`,
       `DTSTAMP:${dtstamp}`,
-      `DTSTART;VALUE=DATE:${formatDateStamp(start)}`,
+      `DTSTART:${formatLocalDateTime(day, 0, 0, 0)}`,
       "RRULE:FREQ=DAILY;COUNT=1",
       "SEQUENCE:0",
       `SUMMARY:${escapeText(event.summary)}`,
