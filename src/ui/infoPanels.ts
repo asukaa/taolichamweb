@@ -1,3 +1,5 @@
+import { ICS_GUIDE_HASH } from "./icsGuide";
+
 let helpOpen = false;
 let donateOpen = false;
 
@@ -57,18 +59,18 @@ function renderHelpModal(): string {
 
         <h3>4. Cài đặt chung</h3>
         <ul>
-          <li>"Tạo lịch cho bao nhiêu năm tới": số năm được tính trước cho bảng xem trước và khi bấm "Tải tất cả
-            (.ics)".</li>
+          <li>"Tạo lịch cho bao nhiêu năm tới": số năm được tính trước cho bảng xem trước và khi bấm "Xuất file
+            nhắc việc (.ics)".</li>
           <li>"Nhắc trước (khi xuất .ics)": số ngày/giờ/phút hệ thống sẽ nhắc trước ngày giỗ trong file .ics.</li>
         </ul>
 
         <h3>5. Nhập / xuất dữ liệu</h3>
         <ul>
-          <li>"Tải file mẫu (.xlsx)": tải file Excel mẫu để điền hàng loạt.</li>
+          <li>"Xuất file nhắc việc (.ics)": xuất file lịch nhắc chứa tất cả sự kiện đã lưu, nhập vào ứng dụng lịch
+            trên điện thoại/máy tính để tự động nhắc nhở (xem hướng dẫn chi tiết ở cuối trang này).</li>
           <li>"Nhập từ Excel": nhập danh sách từ file Excel đã điền theo mẫu.</li>
           <li>"Xuất ra Excel": xuất toàn bộ danh sách hiện có ra file Excel để lưu trữ hoặc chia sẻ.</li>
-          <li>"Tải tất cả (.ics)": xuất file lịch nhắc chứa tất cả sự kiện đã lưu, nhập vào ứng dụng lịch trên điện
-            thoại/máy tính để tự động nhắc nhở.</li>
+          <li>"Tải file mẫu (.xlsx)": tải file Excel mẫu để điền hàng loạt.</li>
         </ul>
 
         <h3>6. Lưu trữ dữ liệu</h3>
@@ -79,6 +81,10 @@ function renderHelpModal(): string {
 
         <h3>7. Cài đặt như ứng dụng (PWA)</h3>
         <p>Có thể chọn "Thêm vào màn hình chính" từ trình duyệt để dùng ứng dụng như một app trên điện thoại/máy tính.</p>
+
+        <a href="${ICS_GUIDE_HASH}" target="_blank" rel="noopener" class="ics-guide-link">
+          📄 Hướng dẫn chi tiết cách nhập file .ics vào Google Calendar / Outlook / Apple Calendar
+        </a>
       </div>
     </div>
   `;

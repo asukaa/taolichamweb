@@ -11,6 +11,7 @@ import { downloadBlob } from "../services/download";
 import type { AnniversaryEntry, AnniversaryInput } from "../models/anniversary";
 import { renderLunarLookup, wireLunarLookup } from "./lunarLookup";
 import { renderDonateButton, renderHelpButton, renderInfoPanels, wireInfoPanels } from "./infoPanels";
+import { isIcsGuideRoute, renderIcsGuidePage } from "./icsGuide";
 import { escapeHtml } from "./escapeHtml";
 
 const YEARS_AHEAD_KEY = "taolicham.yearsAhead.v1";
@@ -232,6 +233,12 @@ function renderList(entries: AnniversaryEntry[], yearsAhead: number): string {
 function render(): void {
   const app = document.getElementById("app");
   if (!app) return;
+
+  if (isIcsGuideRoute()) {
+    app.innerHTML = renderIcsGuidePage();
+    return;
+  }
+
   const entries = listAnniversaries();
   const yearsAhead = getYearsAhead();
   const alarmSettings = getAlarmSettings();
@@ -271,11 +278,11 @@ function render(): void {
         </div>
       </div>
       <div class="toolbar">
-        <button type="button" id="download-template">Tải file mẫu (.xlsx)</button>
+        <button type="button" id="export-all" ${entries.length === 0 ? "disabled" : ""}>Xuất file nhắc việc (.ics)</button>
         <button type="button" id="import-excel">Nhập từ Excel</button>
         <input type="file" id="import-file-input" accept=".xlsx" hidden />
         <button type="button" id="export-excel" ${entries.length === 0 ? "disabled" : ""}>Xuất ra Excel</button>
-        <button type="button" id="export-all" ${entries.length === 0 ? "disabled" : ""}>Tải tất cả (.ics)</button>
+        <button type="button" id="download-template">Tải file mẫu (.xlsx)</button>
       </div>
       <ul class="entry-list">${renderList(entries, yearsAhead)}</ul>
     </section>
@@ -436,5 +443,6 @@ function wireEvents(entries: AnniversaryEntry[], yearsAhead: number): void {
 }
 
 export function mountApp(): void {
+  window.addEventListener("hashchange", render);
   render();
 }

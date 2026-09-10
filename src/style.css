@@ -870,3 +870,77 @@ td {
   font-weight: 600;
   color: var(--text-h);
 }
+
+.ics-guide-link {
+  display: block;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ics-guide-link:hover {
+  text-decoration: underline;
+}
+
+.ics-guide {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 48px;
+}
+
+.ics-guide-back {
+  display: inline-block;
+  margin: 8px 0 16px;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ics-guide-back:hover {
+  text-decoration: underline;
+}
+
+.ics-guide h1 {
+  font-size: 24px;
+  color: var(--text-h);
+  margin: 0 0 4px;
+}
+
+.ics-guide h2 {
+  font-size: 17px;
+  color: var(--text-h);
+  margin: 0 0 10px;
+}
+
+.ics-guide h3 {
+  font-size: 14px;
+  color: var(--text-h);
+  margin: 14px 0 6px;
+}
+
+.ics-guide p,
+.ics-guide li {
+  line-height: 1.6;
+}
+
+.ics-guide ol,
+.ics-guide ul {
+  padding-left: 20px;
+  margin: 0 0 10px;
+}
+
+.ics-guide li {
+  margin-bottom: 6px;
+}
+
+.ics-guide-source {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.ics-guide-source a {
+  color: var(--accent);
+}
