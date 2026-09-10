@@ -1,4 +1,4 @@
-# Lịch Ngày Giỗ
+# Lịch âm và lời nhắc lịch âm
 
 Web app (PWA) giúp nhập ngày giỗ theo âm lịch Việt Nam, tự động quy đổi sang ngày dương lịch cho các năm
 tiếp theo, tra cứu lịch âm hàng ngày, và xuất ra lịch nhắc (kèm báo trước) để đưa vào ứng dụng lịch
