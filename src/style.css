@@ -98,6 +98,7 @@ label.checkbox {
 }
 
 input,
+select,
 textarea {
   font: inherit;
   padding: 8px 10px;
@@ -108,6 +109,7 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
