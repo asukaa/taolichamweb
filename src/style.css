@@ -11,6 +11,8 @@
   --weekend-tint: #fdecec;
   --holiday-tint: #fdf1c7;
   --holiday-text: #92650a;
+  --leap-tint: #e0f2e9;
+  --leap-text: #1f7a4d;
   --hover-tint: #e7defb;
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
 
@@ -35,6 +37,8 @@
     --weekend-tint: #3a2226;
     --holiday-tint: #3d3418;
     --holiday-text: #f2c34d;
+    --leap-tint: #1c3a2c;
+    --leap-text: #6fd6a3;
     --hover-tint: #3a3350;
   }
 }
@@ -418,6 +422,28 @@ button.delete {
   opacity: 1;
 }
 
+.lookup-grid td.leap-month {
+  position: relative;
+}
+
+.lookup-grid td.leap-month::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--leap-text);
+}
+
+.lookup-grid td.leap-month .lunar-day {
+  color: var(--leap-text);
+  font-weight: 700;
+  opacity: 1;
+}
+
+
 .lookup-grid td.lookup-day {
   cursor: pointer;
 }
@@ -529,9 +555,32 @@ button.delete {
   margin-bottom: 16px;
 }
 
-.year-view h2 {
-  margin: 0;
+.year-view-title {
   color: var(--text-h);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.year-view-header input#year-view-year-input {
+  width: 90px;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card-bg);
+  color: var(--text-h);
+}
+
+.year-view-canchi {
+  color: var(--text-h);
+  font-size: 15px;
+}
+
+.year-view-leap-badge {
+  color: var(--leap-text);
+  font-weight: 700;
 }
 
 .year-view-close {
@@ -576,6 +625,13 @@ button.delete {
 
 .lookup-grid.compact .lunar-day {
   font-size: 9px;
+}
+
+.lookup-grid.compact td.leap-month::after {
+  top: 1px;
+  right: 1px;
+  width: 4px;
+  height: 4px;
 }
 
 .year-view-footer {

@@ -312,6 +312,19 @@ export function getSolarTermName(solar: SolarDate, timeZone: number = VN_TIME_ZO
   return SOLAR_TERM_NAMES_VI[getSolarTermIndex(solar, timeZone)];
 }
 
+/**
+ * The lunar month number (1-12) that is doubled (has a leap occurrence) in the
+ * given lunar year, or null if that lunar year has no leap month at all.
+ */
+export function getLeapMonthOfYear(lunarYear: number, timeZone: number = VN_TIME_ZONE): number | null {
+  for (let month = 1; month <= 12; month++) {
+    if (isPossibleLeapMonth(lunarYear, month, timeZone)) {
+      return month;
+    }
+  }
+  return null;
+}
+
 export function resolveLeapFromDeathYear(
   lunarDay: number,
   lunarMonth: number,

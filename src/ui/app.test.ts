@@ -350,7 +350,8 @@ describe("year calendar view", () => {
 
     const overlay = document.querySelector(".year-view-backdrop")!;
     expect(overlay).not.toBeNull();
-    expect(overlay.querySelector("h2")!.textContent).toBe("Năm 2026 - Bính Ngọ");
+    expect((overlay.querySelector("#year-view-year-input") as HTMLInputElement).value).toBe("2026");
+    expect(overlay.querySelector(".year-view-canchi")!.textContent).toContain("Bính Ngọ");
     expect(overlay.querySelectorAll(".year-view-month")).toHaveLength(12);
   });
 
@@ -396,17 +397,53 @@ describe("year calendar view", () => {
     yearInput.dispatchEvent(new Event("change"));
     document.getElementById("lookup-year-view")!.click();
 
-    expect(document.querySelector(".year-view h2")!.textContent).toBe("Năm 2026 - Bính Ngọ");
+    const yearViewYearInput = () => document.getElementById("year-view-year-input") as HTMLInputElement;
+    expect(yearViewYearInput().value).toBe("2026");
+    expect(document.querySelector(".year-view-canchi")!.textContent).toContain("Bính Ngọ");
 
     document.getElementById("year-view-year-up")!.click();
     expect(document.querySelector(".year-view-backdrop")).not.toBeNull(); // stays open
-    expect(document.querySelector(".year-view h2")!.textContent).toBe("Năm 2027 - Đinh Mùi");
+    expect(yearViewYearInput().value).toBe("2027");
+    expect(document.querySelector(".year-view-canchi")!.textContent).toContain("Đinh Mùi");
     // the underlying month view's year input stays in sync
     expect((document.getElementById("lookup-year-input") as HTMLInputElement).value).toBe("2027");
 
     document.getElementById("year-view-year-down")!.click();
     document.getElementById("year-view-year-down")!.click();
-    expect(document.querySelector(".year-view h2")!.textContent).toBe("Năm 2025 - Ất Tỵ");
+    expect(yearViewYearInput().value).toBe("2025");
+    expect(document.querySelector(".year-view-canchi")!.textContent).toContain("Ất Tỵ");
+  });
+
+  it("lets the user type a year directly into the year-view input", () => {
+    mountApp();
+    document.getElementById("lookup-year-view")!.click();
+
+    const yearViewYearInput = document.getElementById("year-view-year-input") as HTMLInputElement;
+    yearViewYearInput.value = "2023";
+    yearViewYearInput.dispatchEvent(new Event("change"));
+
+    expect(document.querySelector(".year-view-backdrop")).not.toBeNull(); // stays open
+    expect(document.querySelector(".year-view-canchi")!.textContent).toContain("Quý Mão");
+    // 2023 (âm lịch) has a leap 2nd month - the year view should flag it.
+    expect(document.querySelector(".year-view-canchi")!.textContent).toContain("(nhuận)");
+    expect((document.getElementById("lookup-year-input") as HTMLInputElement).value).toBe("2023");
+  });
+
+  it("colors days that fall in a leap lunar month and names the leap month in the day detail", () => {
+    mountApp();
+    const yearInput = document.getElementById("lookup-year-input") as HTMLInputElement;
+    yearInput.value = "2023";
+    yearInput.dispatchEvent(new Event("change"));
+    const monthSelect = document.getElementById("lookup-month-select") as HTMLSelectElement;
+    monthSelect.value = "3"; // solar March 2023 falls inside the leap 2nd lunar month
+    monthSelect.dispatchEvent(new Event("change"));
+
+    const leapDay = document.querySelector<HTMLTableCellElement>(".lookup-grid td.leap-month");
+    expect(leapDay).not.toBeNull();
+
+    leapDay!.click();
+    const detail = document.querySelector(".lookup-detail")!;
+    expect(detail.textContent).toContain("nhuận");
   });
 });
 

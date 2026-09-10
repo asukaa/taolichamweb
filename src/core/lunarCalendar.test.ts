@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   getDayCanChi,
   getIsoWeekNumber,
+  getLeapMonthOfYear,
   getMonthCanChi,
   getSolarTermName,
   getWeekdayName,
@@ -81,6 +82,25 @@ describe("isPossibleLeapMonth", () => {
         isPossibleLeapMonth(year, m),
       );
       expect(leapCandidates.length).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+describe("getLeapMonthOfYear", () => {
+  it("finds the well-known leap month of lunar year 2023 (nhuận tháng 2)", () => {
+    expect(getLeapMonthOfYear(2023)).toBe(2);
+  });
+
+  it("returns null for a lunar year with no leap month (2026)", () => {
+    expect(getLeapMonthOfYear(2026)).toBeNull();
+  });
+
+  it("agrees with isPossibleLeapMonth across a range of years", () => {
+    for (let year = 2015; year <= 2035; year++) {
+      const leapMonth = getLeapMonthOfYear(year);
+      for (let month = 1; month <= 12; month++) {
+        expect(isPossibleLeapMonth(year, month)).toBe(leapMonth === month);
+      }
     }
   });
 });

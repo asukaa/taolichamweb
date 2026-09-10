@@ -1,6 +1,7 @@
 import {
   getDayCanChi,
   getIsoWeekNumber,
+  getLeapMonthOfYear,
   getMonthCanChi,
   getSolarTermName,
   getWeekdayName,
@@ -83,10 +84,15 @@ function renderDayCell(
     isToday ? "today" : "",
     isSelected ? "selected" : "",
     holidayName ? "holiday" : "",
+    lunar.isLeap ? "leap-month" : "",
   ]
     .filter(Boolean)
     .join(" ");
-  const titleAttr = holidayName ? ` title="${escapeHtml(holidayName)}"` : "";
+  const titleAttr = holidayName
+    ? ` title="${escapeHtml(holidayName)}"`
+    : lunar.isLeap
+      ? ` title="Tháng ${lunar.month} nhuận"`
+      : "";
   return `
     <td
       class="${classes}"
@@ -158,6 +164,12 @@ function renderDayDetail(): string {
   const solarText = `${pad2(solar.day)}/${pad2(solar.month)}/${solar.year} (${getWeekdayName(solar)})`;
   const lunarText = `${lunar.day}/${lunar.month}${lunar.isLeap ? " (nhuận)" : ""} âm lịch`;
   const holidayName = getLunarHolidayName(lunar);
+  const leapMonthOfYear = getLeapMonthOfYear(lunar.year);
+  const leapNote = lunar.isLeap
+    ? `Ngày này thuộc tháng ${lunar.month} nhuận`
+    : leapMonthOfYear !== null
+      ? `Năm ${lunar.year} âm lịch có tháng ${leapMonthOfYear} nhuận`
+      : null;
 
   return `
     <div class="lookup-detail-backdrop">
@@ -177,6 +189,7 @@ function renderDayDetail(): string {
           <dd>${getYearCanChi(lunar.year)}</dd>
           <dt>Tiết khí</dt>
           <dd>${getSolarTermName(solar)}</dd>
+          ${leapNote ? `<dt>Tháng nhuận</dt><dd>${escapeHtml(leapNote)}</dd>` : ""}
         </dl>
       </div>
     </div>
@@ -186,11 +199,12 @@ function renderDayDetail(): string {
 function renderYearOverlay(year: number): string {
   if (!yearViewOpen) return "";
   const today = new Date();
+  const leapMonthOfYear = getLeapMonthOfYear(year);
   const months = Array.from({ length: 12 }, (_, i) => i + 1)
     .map(
       (m) => `
         <div class="year-view-month">
-          <h3>Tháng ${m}</h3>
+          <h3>Tháng ${m}${leapMonthOfYear === m ? " (nhuận)" : ""}</h3>
           ${renderMonthGrid(year, m, today, { compact: true })}
         </div>
       `,
@@ -202,11 +216,22 @@ function renderYearOverlay(year: number): string {
       <div class="year-view" role="dialog" aria-modal="true">
         <button type="button" class="year-view-close" aria-label="Đóng">×</button>
         <div class="year-view-header">
-          <h2>Năm ${year} - ${getYearCanChi(year)}</h2>
+          <span class="year-view-title">Năm</span>
+          <input
+            id="year-view-year-input"
+            type="number"
+            aria-label="Chọn năm"
+            min="${MONTH_MIN_YEAR}"
+            max="${MONTH_MAX_YEAR}"
+            value="${year}"
+          />
           <div class="year-stepper">
             <button type="button" id="year-view-year-up" aria-label="Năm sau">▲</button>
             <button type="button" id="year-view-year-down" aria-label="Năm trước">▼</button>
           </div>
+          <span class="year-view-canchi">
+            ${getYearCanChi(year)}${leapMonthOfYear !== null ? ` <span class="year-view-leap-badge">(nhuận)</span>` : ""}
+          </span>
         </div>
         <div class="year-view-grid">${months}</div>
         <div class="year-view-footer">
@@ -256,7 +281,8 @@ export function renderLunarLookup(): string {
       <p class="hint">
         Số nhỏ bên dưới là ngày âm lịch (theo âm lịch Việt Nam, múi giờ UTC+7); hiện "ngày/tháng" vào đầu tháng âm
         và vào ngày đầu/cuối tháng dương. "*" hoặc "(nh)" = tháng nhuận. Cột "Tuần" là số tuần trong năm. Ô tô màu
-        vàng là ngày lễ/tết âm lịch. Bấm vào 1 ngày để xem chi tiết.
+        vàng là ngày lễ/tết âm lịch, ô có chấm xanh ở góc phải là ngày thuộc tháng nhuận. Bấm vào 1 ngày để xem
+        chi tiết.
       </p>
       <div class="export-range">
         <label>Từ năm
@@ -375,6 +401,13 @@ export function wireLunarLookup(onChange: () => void): void {
     const events = Array.from({ length: yearCount }, (_, i) => from + i).flatMap((y) => buildLunarYearEvents(y));
     const filename = from === to ? `lich-am-${from}.ics` : `lich-am-${from}-${to}.ics`;
     downloadIcsFile(filename, buildIcsCalendar(events));
+  });
+  document.getElementById("year-view-year-input")?.addEventListener("change", (e) => {
+    const value = Number((e.target as HTMLInputElement).value);
+    if (Number.isInteger(value) && value >= MONTH_MIN_YEAR && value <= MONTH_MAX_YEAR) {
+      viewYear = value;
+      onChange();
+    }
   });
   document.getElementById("year-view-year-up")?.addEventListener("click", () => {
     const next = viewYear! + 1;
