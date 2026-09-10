@@ -935,12 +935,3 @@ td {
 .ics-guide li {
   margin-bottom: 6px;
 }
-
-.ics-guide-source {
-  font-size: 13px;
-  opacity: 0.8;
-}
-
-.ics-guide-source a {
-  color: var(--accent);
-}

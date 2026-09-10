@@ -93,13 +93,6 @@ export function renderIcsGuidePage(): string {
         </ul>
       </section>
 
-      <p class="ics-guide-source">
-        Tham khảo thêm:
-        <a href="https://boonygroup.com/blog/chi-tiet/huong-dan-su-dung-file-ics-tich-hop-vao-lich-dien-tu-google-calendar-outlook/" target="_blank" rel="noopener">
-          Hướng dẫn sử dụng file .ics tích hợp vào lịch điện tử Google Calendar, Outlook — boonygroup.com
-        </a>
-      </p>
-
       <a href="./" class="ics-guide-back">← Quay lại Âm Lịch Việt Nam</a>
     </div>
   `;
