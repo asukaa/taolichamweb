@@ -142,17 +142,20 @@ describe("app end-to-end DOM flow", () => {
     expect(list.textContent).toContain("mất năm 2026");
   });
 
-  it("warns and blocks save when neither death year nor leap-month checkbox is set, until confirmed", () => {
+  it("saves immediately as a regular month, without any confirm prompt, when neither death year nor leap type is set", () => {
     mountApp();
-    window.confirm = vi.fn(() => false); // user cancels the warning
     setInput("personName", "Bà Ngoại");
     setInput("eventLabel", "Giỗ Bà Ngoại");
     setInput("lunarDay", "9");
     setInput("lunarMonth", "2");
     submitForm();
 
-    expect(window.confirm).toHaveBeenCalled();
-    expect(document.querySelectorAll(".entry")).toHaveLength(0); // save was aborted
+    expect(window.confirm).not.toHaveBeenCalled();
+    expect(window.alert).not.toHaveBeenCalled();
+    const list = document.querySelector(".entry-list")!;
+    expect(list.textContent).toContain("Giỗ Bà Ngoại");
+    expect(list.textContent).not.toContain("(nhuận)");
+    expect(document.querySelectorAll(".entry")).toHaveLength(1);
   });
 
   it("rejects invalid input (out-of-range lunar day) without creating an entry", () => {

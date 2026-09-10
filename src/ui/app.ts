@@ -103,8 +103,7 @@ function readRawFormInput(form: HTMLFormElement): RawEntryInput | null {
 /**
  * Works out the effective "isLeap" flag to save, using the death year when given
  * to auto-detect or confirm it. Returns null when the user needs to go fix
- * something first (invalid year, or they cancelled an unresolved-leap warning) -
- * the caller should abort the save in that case.
+ * something first (invalid year) - the caller should abort the save in that case.
  */
 function resolveLunarIsLeap(raw: RawEntryInput): boolean | null {
   if (raw.deathYear !== null) {
@@ -123,14 +122,6 @@ function resolveLunarIsLeap(raw: RawEntryInput): boolean | null {
       return raw.lunarIsLeapChecked;
     }
     return resolution.isLeap;
-  }
-  if (!raw.lunarIsLeapChecked) {
-    const proceed = confirm(
-      'Bạn chưa nhập năm mất và đang để "Tháng thường" - hệ thống sẽ lưu đây là tháng thường.\n\n' +
-        "Nếu ngày giỗ thực tế rơi vào tháng nhuận, ngày dương lịch tính ra sẽ sai 1 tháng.\n\n" +
-        'Nhập năm mất ở form để hệ thống tự xác định, hoặc bấm "Hủy" để quay lại chỉnh sửa trước khi lưu.',
-    );
-    if (!proceed) return null;
   }
   return raw.lunarIsLeapChecked;
 }
@@ -165,8 +156,9 @@ function renderForm(entries: AnniversaryEntry[]): string {
       </div>
       <p class="hint">
         💡 "Năm mất" không bắt buộc — chỉ cần nhập khi biết, để hệ thống tự xác định tháng nhuận thay vì phải tự
-        chọn. Nếu không nhập năm mất và cũng không chọn "Tháng nhuận", hệ thống sẽ hỏi lại trước khi lưu để tránh
-        nhầm giữa tháng thường và tháng nhuận.
+        chọn. Nếu không nhập năm mất, hệ thống sẽ lưu theo lựa chọn ở ô "Loại tháng" (mặc định là "Tháng thường").
+        Nếu ngày giỗ thực tế rơi vào tháng nhuận mà ô "Loại tháng" đang để "Tháng thường" (hoặc ngược lại), ngày
+        dương lịch tính ra sẽ bị sai lệch khoảng 1 tháng — hãy chọn đúng loại tháng trước khi lưu.
       </p>
       <label>Ghi chú thêm ...
         <textarea name="description" rows="2" placeholder="VD: mất lúc 14h ngày 02/12/2025">${editing ? escapeHtml(editing.description) : ""}</textarea>
