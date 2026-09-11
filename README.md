@@ -9,6 +9,8 @@ Bản demo trực tuyến: **https://al.28082024.xyz/**
 ## Tính năng
 
 ### Tra cứu lịch âm
+<img width="879" height="756" alt="1" src="https://github.com/user-attachments/assets/9b323109-f5e5-4e13-a0f2-0089f9f5454d" />
+
 
 - Xem lịch tháng bất kỳ: chọn nhanh tháng (dropdown) và năm (gõ trực tiếp hoặc bấm nút ▲▼), nút "Hôm nay" để
   quay lại tháng hiện tại.
@@ -26,6 +28,7 @@ Bản demo trực tuyến: **https://al.28082024.xyz/**
   dương trong bất kỳ ứng dụng lịch nào.
 
 ### Quản lý ngày giỗ
+<img width="877" height="707" alt="2" src="https://github.com/user-attachments/assets/9b88b7ce-781b-404a-a0f5-db330e91aa46" />
 
 - Thêm/sửa/xóa trực tiếp trong app (không cần Excel), lưu trên trình duyệt của bạn (không gửi lên máy chủ
   nào).
@@ -34,6 +37,7 @@ Bản demo trực tuyến: **https://al.28082024.xyz/**
   vì đoán sai; nếu không nhập năm mất và cũng không tick "Tháng nhuận", app sẽ hỏi xác nhận trước khi lưu.
 - **Xem trước nhiều năm**: bảng xem trước hiển thị ngày âm, thứ trong tuần, và ngày dương lịch tương ứng cho
   từng năm sắp tới (số năm tạo lịch tùy chỉnh được).
+<img width="879" height="699" alt="3" src="https://github.com/user-attachments/assets/78f2bdf5-ed2a-41db-845a-d31a2cdfbcbe" />
 
 ### Nhập / xuất dữ liệu
 
