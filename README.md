@@ -41,8 +41,7 @@ Bản demo trực tuyến: **https://al.28082024.xyz/**
 
 ### Nhập / xuất dữ liệu
 
-- **Excel**: tải file mẫu, nhập danh sách từ file `.xlsx` (đọc được cả file `Ngay gio.xlsx` của bản desktop
-  cũ), xuất danh sách hiện tại ra Excel.
+- **Excel**: tải file mẫu (dùng nhâp liệu nhanh nhập hàng loạt), nhập danh sách từ file `.xlsx` xuất danh sách hiện tại ra Excel.
 - **Lịch nhắc `.ics`**: xuất từng người hoặc tất cả; mỗi sự kiện bắt đầu 00:00 và kết thúc 23:59 đúng ngày
   hôm đó.
 - **Lời nhắc (VALARM)**: tùy chỉnh báo trước bao nhiêu Ngày/Giờ/Phút (mặc định 1 ngày); nội dung lời nhắc tự
